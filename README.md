@@ -54,13 +54,31 @@
 
 
 
-| ID | Title | Date | Severity | Status |
-
-|---|---|---|---|---|
-
-| INC-001 | SSH Brute Force from Day Gone | 2026-05-12 | High | Contained ✅ |
+\## 📁 Incidents
 
 
+
+| ID | Title | Date | Severity | MITRE | Status |
+
+|---|---|---|---|---|---|
+
+| \[INC-001](incidents/INC-001/iocs.md) | SSH Brute Force from Day Gone | 2026-05-12 | 🔴 High | T1110.001 | ✅ Contained |
+
+
+
+\## 📊 Attack Coverage
+
+
+
+| Tactic | Technique | Status |
+
+|---|---|---|
+
+| Reconnaissance | T1595 - Active Scanning | ✅ INC-001 |
+
+| Credential Access | T1110.001 - Password Guessing | ✅ INC-001 |
+
+| Lateral Movement | T1021.004 - SSH | ✅ INC-001 |
 
 \## 👤
 
