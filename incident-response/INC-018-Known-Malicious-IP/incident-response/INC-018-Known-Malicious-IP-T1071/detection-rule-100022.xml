@@ -1,0 +1,11 @@
+<!-- INC-018 detection rule — add inside <group name="nightfallnode_soc,"> in local_rules.xml -->
+<!-- Requires CDB list etc/lists/malicious-ioc/malicious-ip registered in ossec.conf -->
+<rule id="100022" level="12">
+  <if_group>authentication_failed</if_group>
+  <list field="srcip" lookup="address_match_key">etc/lists/malicious-ioc/malicious-ip</list>
+  <description>NightFallNode: Login attempt from known-malicious IP (threat-intel / IOC match)</description>
+  <mitre>
+    <id>T1071</id>
+  </mitre>
+  <group>threat_intel,ioc_match,attack,</group>
+</rule>
