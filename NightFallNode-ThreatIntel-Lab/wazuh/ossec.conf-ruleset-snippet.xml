@@ -1,0 +1,4 @@
+<!-- Add inside the existing <ruleset> ... </ruleset> block in ossec.conf -->
+<list>etc/lists/malicious-ioc/malicious-ip</list>
+<list>etc/lists/malicious-ioc/malicious-domains</list>
+<list>etc/lists/malicious-ioc/malware-hashes</list>

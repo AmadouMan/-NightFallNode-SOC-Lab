@@ -1,0 +1,83 @@
+<!--
+  NightFallNode SOC Lab - identity & threat-intel detection rules
+  Add these INSIDE your <group name="nightfallnode_soc,"> block in local_rules.xml.
+  IDs 100017-100022. Mapped to MITRE ATT&CK.
+-->
+
+<!-- ==================== -->
+<!-- KEYCLOAK AUTHZ        -->
+<!-- INC-016 - T1078/T1087 -->
+<!-- ==================== -->
+
+<!-- Base: any Keycloak auth event (silent, feeds the rules below) -->
+<rule id="100017" level="0">
+  <decoded_as>json</decoded_as>
+  <field name="loggerName">keycloak.events</field>
+  <description>NightFallNode: Keycloak authentication event.</description>
+</rule>
+
+<!-- INC-016a - user denied access to application (authorization failure) -->
+<rule id="100018" level="6">
+  <if_sid>100017</if_sid>
+  <field name="message">LOGIN_ERROR</field>
+  <field name="message">access_denied</field>
+  <description>NightFallNode: Keycloak user denied access to application (authorization failure)</description>
+  <mitre>
+    <id>T1078</id>
+  </mitre>
+  <group>authentication_failed,keycloak_authz,</group>
+</rule>
+
+<!-- INC-016b - repeated denials = authz probing / insider recon -->
+<rule id="100019" level="10" frequency="3" timeframe="300">
+  <if_matched_sid>100018</if_matched_sid>
+  <description>NightFallNode: Keycloak repeated access-denied attempts in 5 min (possible authorization probing / insider recon)</description>
+  <mitre>
+    <id>T1078</id>
+    <id>T1087</id>
+  </mitre>
+  <group>keycloak_authz,attack,</group>
+</rule>
+
+<!-- ==================== -->
+<!-- KEYCLOAK AUTH FAILURE -->
+<!-- INC-017 - T1110       -->
+<!-- ==================== -->
+
+<!-- Failed authentication: bad credentials or offboarded/deleted user -->
+<rule id="100020" level="6">
+  <if_sid>100017</if_sid>
+  <field name="message">LOGIN_ERROR</field>
+  <field name="message">invalid_user_credentials</field>
+  <description>NightFallNode: Keycloak failed authentication (invalid credentials or offboarded user)</description>
+  <mitre>
+    <id>T1110</id>
+  </mitre>
+  <group>authentication_failed,keycloak_authn,</group>
+</rule>
+
+<!-- Repeated auth failures = brute force / credential stuffing -->
+<rule id="100021" level="10" frequency="5" timeframe="60">
+  <if_matched_sid>100020</if_matched_sid>
+  <description>NightFallNode: Keycloak brute force / credential stuffing (5 failed logins in 60s)</description>
+  <mitre>
+    <id>T1110</id>
+  </mitre>
+  <group>keycloak_authn,attack,</group>
+</rule>
+
+<!-- ==================== -->
+<!-- THREAT INTEL (IOC)    -->
+<!-- INC-018 - T1071       -->
+<!-- ==================== -->
+
+<!-- Login attempt from a known-malicious IP (CDB list match) -->
+<rule id="100022" level="12">
+  <if_group>authentication_failed</if_group>
+  <list field="srcip" lookup="address_match_key">etc/lists/malicious-ioc/malicious-ip</list>
+  <description>NightFallNode: Login attempt from known-malicious IP (threat-intel / IOC match)</description>
+  <mitre>
+    <id>T1071</id>
+  </mitre>
+  <group>threat_intel,ioc_match,attack,</group>
+</rule>

@@ -1,0 +1,8 @@
+# CDB list: etc/lists/malicious-ioc/malicious-ip
+# format -> key:value   (key = IP/CIDR, value = label)
+# In production this is rebuilt daily from a feed (see scripts/update-iocs.sh).
+# Lab test indicator:
+192.168.112.135:daygone-lab-attacker
+# Example feed-style entries:
+45.133.1.10:known-c2
+185.220.101.4:tor-exit
